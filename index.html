@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Screenshot Maker</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Playfair+Display:wght@500&display=swap');
+
+    /* রিসেট */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    body {
+      font-family: 'Playfair Display', serif;
+      background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #fff;
+      position: relative;
+      overflow-y: auto;
+      padding: 20px 15px;
+    }
+
+    /* Particles Background */
+    #particles {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 0;
+    }
+
+    /* Main Container */
+    .main-container {
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      z-index: 2;
+      flex: 1;
+    }
+
+    /* Banner */
+    .banner {
+      width: 100%;
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      padding: 18px 25px;
+      border-radius: 22px 22px 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+      position: relative;
+    }
+
+    .banner::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(45deg, rgba(255,255,255,0.1), transparent);
+      border-radius: 22px 22px 0 0;
+    }
+
+    .banner-logo {
+      width: 50px;
+      height: 50px;
+      margin-left:-17px;
+      border-radius: 50%;
+      object-fit: contain;
+      border: 3px solid #fff;
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+    }
+
+    .banner-title {
+      font-family: 'Cinzel', serif;
+      font-size: 21px; /* তোমার কোডে 90px ছিল, যেটা ভুল মনে হচ্ছে, তাই 21px করেছি */
+      font-weight: 700;
+      color: #1a1a2e;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      flex: 1;
+      text-align: center;
+      margin-left: -10px;
+    }
+
+    .banner-icon {
+      font-size: 20px;
+      color: #1a1a2e;
+    }
+
+    /* Form Card */
+    .form-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 0 0 24px 24px;
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.3),
+        inset 0 0 20px rgba(255, 215, 0, 0.1);
+      width: 100%;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .form-body {
+      padding: 35px 30px;
+    }
+
+    .input-group {
+      margin-bottom: 25px;
+      position: relative;
+    }
+
+    .input-group label {
+      position: absolute;
+      top: 50%;
+      left: 50px;
+      transform: translateY(-50%);
+      font-size: 16px;
+      color: #ccc;
+      pointer-events: none;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .input-group input:focus ~ label,
+    .input-group input:valid ~ label {
+      top: -10px;
+      left: 15px;
+      font-size: 12px;
+      color: #FFD700;
+      background: rgba(26, 26, 46, 0.8);
+      padding: 0 8px;
+      border-radius: 4px;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-wrapper i {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #FFD700;
+      font-size: 20px;
+      z-index: 1;
+    }
+
+    .input-wrapper input {
+      width: 100%;
+      padding: 16px 16px 16px 50px;
+      border: none;
+      border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+      border-radius: 0;
+      font-size: 16px;
+      background: transparent;
+      color: #fff;
+      transition: all 0.3s;
+    }
+
+    .input-wrapper input:focus {
+      outline: none;
+      border-bottom: 2px solid #FFD700;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    }
+
+    .input-wrapper input::placeholder {
+      color: transparent;
+    }
+
+    .submit-btn {
+      margin-top: 30px;
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      color: #1a1a2e;
+      border: none;
+      border-radius: 14px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.4s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .submit-btn::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 0; height: 0;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .submit-btn:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 15px 30px rgba(255, 215, 0, 0.5);
+    }
+
+    /* About Box */
+    .about-box {
+      margin: 30px 0 20px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 215, 0, 0.2);
+      border-radius: 20px;
+      padding: 25px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .about-box h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 20px;
+      color: #FFD700;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .about-box h3::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, #FFD700, #FFA500);
+      border-radius: 2px;
+    }
+
+    .dev-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .dev-logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #FFD700;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    }
+
+    .dev-name {
+      font-size: 18px;
+      font-weight: 600;
+      color: #FFD700;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+
+    .contact-title {
+      font-size: 15px;
+      color: #ccc;
+      margin: 18px 0 12px;
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .social-links a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #FFD700;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .social-links a:hover {
+      color: #FFA500;
+      transform: translateY(-3px);
+    }
+
+    .social-links i {
+      font-size: 20px;
+    }
+
+    .thank-you {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #aaa;
+      font-style: italic;
+    }
+
+    .about-text {
+      margin-top: 22px;
+      font-size: 13.5px;
+      color: #ccc;
+      line-height: 1.6;
+      text-align: center;
+      padding: 0 10px;
+    }
+    .about-text strong {
+      color: #FFD700;
+      font-size: 15px;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .banner { padding: 15px 20px; }
+      .banner-title { font-size: 21px; }
+      .form-body { padding: 28px 25px; }
+      .about-box { padding: 20px; margin: 25px 0 15px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Particles -->
+  <canvas id="particles"></canvas>
+
+  <div class="main-container">
+    <!-- Banner -->
+    <div class="banner">
+      <img src="https://i.ibb.co.com/CKryP6Vn/images-modified.png" alt="Logo" class="banner-logo" />
+      <div class="banner-title">Bkash Fake Payment screenshot maker</div>
+      <i class="fas fa-crown banner-icon"></i>
+    </div>
+
+    <!-- Form Card -->
+    <div class="form-card">
+      <div class="form-body">
+        <form id="paymentForm">
+          <div class="input-group">
+            <div class="input-wrapper">
+              <i class="fas fa-user"></i>
+              <input type="text" id="name" required />
+              <label for="name">রিসিভারের নাম</label>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <div class="input-wrapper">
+              <i class="fas fa-phone"></i>
+              <input type="text" id="number" maxlength="11" required />
+              <label for="number">মোবাইল নাম্বার</label>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <div class="input-wrapper">
+              <i class="fas fa-coins"></i>
+              <input type="text" id="amount" required />
+              <label for="amount">টাকার পরিমাণ</label>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <div class="input-wrapper">
+              <i class="fas fa-comment-dots"></i>
+              <input type="text" id="reference" />
+              <label for="reference">রেফারেন্স (অপশনাল)</label>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <div class="input-wrapper">
+              <i class="fas fa-barcode"></i>
+              <input type="text" id="txnId" />
+              <label for="txnId">ট্রানজেকশন আইডি (অপশনাল)</label>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <div class="input-wrapper">
+              <i class="fas fa-clock"></i>
+              <input type="datetime-local" id="dateTime" required />
+              <label for="dateTime">তারিখ ও সময়</label>
+            </div>
+          </div>
+
+          <button type="submit" class="submit-btn">
+            <i class="fas fa-camera"></i>
+            Get Screenshot
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- About Box -->
+    <div class="about-box">
+      <h3>My self</h3>
+      <div class="dev-card">
+        <img src="https://i.ibb.co.com/8DVhrvxm/IMG-20251024-002328.jpg" alt="Developer" class="dev-logo" />
+        <div class="dev-name">Developer by - Shahi Vai</div>
+      </div>
+
+      <div class="contact-title">Contact us:</div>
+      <div class="social-links">
+        <a href="https://t.me/your_telegram_id" target="_blank">
+          <i class="fab fa-telegram"></i> Telegram
+        </a>
+        <a href="https://facebook.com/your_facebook_id" target="_blank">
+          <i class="fab fa-facebook"></i> Facebook
+        </a>
+      </div>
+
+      <div class="about-text">
+        <strong>About:</strong><br>
+        এই সাইটটি কারো ক্ষতি করার উদ্দেশ্যে নয়। এটি শুধুমাত্র শিক্ষামূলক এবং ডেভেলপমেন্টের জন্য তৈরি। কোনো প্রতারণামূলক কাজে ব্যবহার করবেন না। আমরা কোনো আর্থিক লেনদেনের দায়িত্ব নিই না।
+      </div>
+
+      <div class="thank-you">
+        Thank you for visiting.
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script>
+    particlesJS("particles", {
+      "particles": {
+        "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+        "color": { "value": "#FFD700" },
+        "shape": { "type": "circle" },
+        "opacity": { "value": 0.5, "random": true },
+        "size": { "value": 3, "random": true },
+        "line_linked": { "enable": false },
+        "move": { "enable": true, "speed": 1, "direction": "none", "random": false, "straight": false, "out_mode": "out" }
+      },
+      "interactivity": {
+        "detect_on": "canvas",
+        "events": { "onhover": { "enable": true, "mode": "repulse" } },
+        "modes": { "repulse": { "distance": 100, "duration": 0.4 } }
+      },
+      "retina_detect": true
+    });
+
+    // Form Logic
+    document.getElementById('paymentForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const number = document.getElementById('number').value.trim();
+      const amount = document.getElementById('amount').value.trim();
+      const reference = document.getElementById('reference').value.trim();
+      const customTxnId = document.getElementById('txnId').value.trim();
+      const dateTime = new Date(document.getElementById('dateTime').value);
+
+      if (!name || !number || !amount || !dateTime) {
+        alert('দয়া করে নাম, নাম্বার, টাকা এবং তারিখ ও সময় দিন!');
+        return;
+      }
+
+      if (!/^\d{11}$/.test(number.replace(/\D/g, ''))) {
+        alert('মোবাইল নাম্বার ১১ সংখ্যার হতে হবে!');
+        return;
+      }
+
+      let txnId = customTxnId || '';
+      if (!txnId) {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        for (let i = 0; i < 10; i++) {
+          txnId += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+      }
+
+      const formattedTime = dateTime.toLocaleString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      }).replace(' ', '').toLowerCase() + ' ' + dateTime.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric'
+      });
+
+      const data = {
+        name,
+        number,
+        amount: amount.replace(/[^\d]/g, ''),
+        reference,
+        txnId,
+        time: formattedTime
+      };
+
+      localStorage.setItem('paymentData', JSON.stringify(data));
+      window.location.href = 'screenshot.html';
+    });
+
+    // Auto comma for amount
+    document.getElementById('amount').addEventListener('input', function(e) {
+      let val = e.target.value.replace(/\D/g, '');
+      if (val) {
+        val = parseInt(val).toLocaleString('en-IN');
+        e.target.value = val;
+      }
+    });
+  </script>
+</body>
+</html>
